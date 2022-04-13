@@ -6,8 +6,9 @@ PATH_GECKODRIVER = './drivers/geckodriver.exe'
 LOGIN_BUTTON = '/html/body/div[1]/div/div[2]/div/div/div[2]/div[3]/div[2]/button/div[1]'
 
 # Spotify Account
+ACCOUNT_FILE = './account.json'
 SPOTIFY_USER = ''
-SPOTIFY_PASSW = ''
+SPOTIFY_PASSW = ""
 
 # Spotify Frontend Settings
 SPOTIFY_URL = 'https://accounts.spotify.com/'
