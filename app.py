@@ -2,6 +2,7 @@
 import json
 
 from modules.browsing import SpotifyFront
+#from modules.ripping import start
 from settings import *
 
 
@@ -17,7 +18,7 @@ def get_song_data() :
 
 def main() :
     get_song_data()
-
+    
 
 def load_account_data() :
     with open(ACCOUNT_FILE, "r") as file :
