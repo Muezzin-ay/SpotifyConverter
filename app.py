@@ -15,9 +15,11 @@ def get_song_data() :
     for song in song_data :
         print(song)
 
+    return song_data
+
 
 def main() :
-    get_song_data()
+    song_data = get_song_data()
     
 
 def load_account_data() :
