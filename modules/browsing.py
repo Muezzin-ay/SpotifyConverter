@@ -46,7 +46,7 @@ class PageDriver :
         self._delay()
 
     def _delay(self) :
-        time.sleep(1)
+        time.sleep(3)
 
     def authenticate(self, user, passw) :
         self._load_page(SPOTIFY_LOGIN)
