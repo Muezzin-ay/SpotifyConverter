@@ -43,13 +43,15 @@ class PageDriver :
         self._load_page(url)
         song_info = self.browser.find_elements(By.CLASS_NAME, SONG_NAME_TAG)
 
-        for i in range(0, len(song_info), 2) :
-            print(song_info[i].text)
-            #playlist_content.append(Song(name, interpreter, ""))
+        cover_url_data = self.browser.find_elements(By.CLASS_NAME, SONG_COVER_TAG)
+        cover_urls = [url.get_attribute("src") for url in cover_url_data[1:]]
+
+        for counter, entry in enumerate(song_info) :
+            song_data = entry.text.split("\n")
+            playlist_content.append(Song(song_data[0], song_data[1], cover_urls[counter]))
 
         return playlist_content
 
-      
 
 
 class SpotifyFront :
@@ -62,16 +64,20 @@ class SpotifyFront :
         content = self.driver.get_playlist_content(playlist_urls[0])
 
         for song in content :
-            pass
-            #print(song)
+            print(song)
 
 
 
 class Song :
-    def __init__(self, name, interpreter, thumbnail_url) :
+    def __init__(self, name, interpreter, cover_url) :
         self.name = name
         self.interpreter = interpreter
-        self.thumbnail_url = thumbnail_url
+        self.cover_url = cover_url
+
+        self.edit_cover_url()
 
     def __repr__(self) :
-        return f'Song "{self.name}" from "{self.interpreter}"'
+        return f'Song "{self.name}" from "{self.interpreter}", Cover "{self.cover_url}"'
+
+    def edit_cover_url(self) :
+        self.cover_url = self.cover_url.replace("ab67616d00004851", "ab67616d00001e02")
