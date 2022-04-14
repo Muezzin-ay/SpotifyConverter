@@ -15,6 +15,7 @@ def load_account_data() :
 def main() :
     user, passw = load_account_data()
     sf = SpotifyFront(user, passw)
+    sf.load_playlists()
     
 
 if __name__ == '__main__' :
