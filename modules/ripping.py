@@ -101,7 +101,7 @@ class Rip():
         with yt_dlp.YoutubeDL(YT_DLP_OPTIONS) as ydl:
             ydl.download([url])
         """
-        os.chdir('C:/Users/alexf/Documents/Python/SpotifyConverter/output')
+        os.chdir(OUTPUT_DIR)
         os.system(f'yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 {url}')
         os.chdir('..')
     def download_url_list(self, url,name):
