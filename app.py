@@ -27,7 +27,6 @@ def rip_songs(songs) :
 
 
 
-
 def main() :
     songs = get_song_data()
     rip_songs(songs)
