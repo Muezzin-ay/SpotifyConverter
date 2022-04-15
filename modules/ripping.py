@@ -10,6 +10,7 @@ from urllib import request
 import os
 from settings import *
 from modules.calcfunc import convert_duration
+from string import punctuation
 
 class get_url_using_name:
 
@@ -79,7 +80,10 @@ class get_url_using_name:
     
         
     def create_youtube_url(self):
-        url_attachment = self.name.replace(" ","+").replace("(","").replace(")","")
+
+        for char in punctuation:
+            url_attachment = self.name.replace(char,"")
+            
         prefix = "https://www.youtube.com/results?search_query="
         youtube_url = prefix+url_attachment
         print(f"youtube_url:{youtube_url}")
