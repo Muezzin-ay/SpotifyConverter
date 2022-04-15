@@ -82,6 +82,7 @@ class Rip():
     def download_opus(self, url):
         #dummy_song = Song("DummyName", "DummyInterpreter", "DummyUrl")
         print("hello world")
+        os.chdir("C:/Users/alexf/Documents/Python/SpotifyConverter/output")
         os.system(f'yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 {url}')
            
     def download_url_list(self, download_url):
