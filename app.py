@@ -34,4 +34,4 @@ def load_account_data() :
     
 
 if __name__ == '__main__' :
-    m
+    main()
