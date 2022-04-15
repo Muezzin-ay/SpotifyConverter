@@ -2,7 +2,7 @@
 import json
 
 from modules.browsing import SpotifyFront
-from modules.ripping import get_url_using_name, Rip
+#from modules.ripping import get_url_using_name, Rip
 from settings import *
 
 
@@ -34,4 +34,8 @@ def load_account_data() :
     
 
 if __name__ == '__main__' :
-    main()
+    #main()
+
+    from yt_dlp import YoutubeDL
+    yt = YoutubeDL()
+    yt.download(["https://www.youtube.com/watch?v=pcnxkUbtJcE"])
