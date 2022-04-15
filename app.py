@@ -18,7 +18,14 @@ def get_song_data() :
     return songs
 
 def rip_songs(songs) :
-    pass
+    for song in songs:
+        get_url = get_url_using_name(song)
+        yt_search_url = get_url.create_youtube_url()
+        youtube_url = get_url.start_selenium(yt_search_url)
+        rip = Rip()
+        rip.download_url_list(youtube_url,song.get_information()[0])
+
+
 
 
 def main() :

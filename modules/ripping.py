@@ -8,18 +8,21 @@ from bs4 import BeautifulSoup
 import time
 from urllib import request
 import os
+from settings import *
+from modules.calcfunc import convert_duration
 
 class get_url_using_name:
 
     def __init__(self,song):
         self.song = song
-        self.name, self.interpreter = song.get_information()
-        name = "Harrison Heatwaves"
-        self.supposed_duration = "2:50"
-        self.name = name
+        self.songname, self.interpreter = song.get_information()
+        self.name = self.songname+" " +self.interpreter
+        self.supposed_duration = song.get_duration()
+        #self.supposed_duration = "2:50"
+        #self.name = name
         print(self.name, self.interpreter)
 
-    def start_selenium(self):
+    def start_selenium(self, name):
 
         browser = webdriver.Firefox(executable_path="./drivers/geckodriver.exe")
         browser.get(self.youtube_url)
@@ -54,15 +57,19 @@ class get_url_using_name:
             duration_cut = duration.text.replace(" ","")
             duration_cut_completely = duration_cut.replace("\n","")
             #print(f"duration:{duration}\n duration_cut:{duration_cut} \n duration_cut_completely:{duration_cut_completely}")
-            #print(f"duration:{duration_cut_completely}---")
+            print(f"duration:{duration_cut_completely}---")
             
-            if duration_cut_completely == self.supposed_duration:
+            if duration_cut_completely == 'SHORTS':
+                continue
+            offset_durations = abs(self.supposed_duration-convert_duration(duration_cut_completely))
+            
+            if offset_durations < 5:
                 #correct_video_title = titles[counter].text.replace("\n","")
                 print(f"FOUND CORRECT VIDEO! {titles[counter].text}, {duration_cut_completely}url:{href_links[counter+1]}")
                 download_url.append(href_links[counter+1])
 
                 counter +=1
-        return download_url
+        return download_url[-1]
 
                 
 
@@ -72,42 +79,33 @@ class get_url_using_name:
     
         
     def create_youtube_url(self):
-        url_attachment = self.name.replace(" ","+")
+        url_attachment = self.name.replace(" ","+").replace("(","").replace(")","")
         prefix = "https://www.youtube.com/results?search_query="
         youtube_url = prefix+url_attachment
         print(f"youtube_url:{youtube_url}")
 
         self.youtube_url = youtube_url
         
+        return youtube_url
+        
 
 
 class Rip():
     from yt_dlp import YoutubeDL
     yt = YoutubeDL()
-    options = {
-        'format':'bestaudio/best',
-        'extractaudio':True,
-        'audioformat':'mp3',
-        'outtmpl':'/output/'+'%(id)s.%(ext)s',     #name the file the ID of the video
-        'noplaylist':True,
-        'nocheckcertificate':True,
-        'proxy':"",
-        'addmetadata':True,
-        'postprocessors': [{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }]
-    }
-    def download_opus(self, url):
+    def download_opus(self, url,name):
+        """
         #dummy_song = Song("DummyName", "DummyInterpreter", "DummyUrl")
-
-        with yt_dlp.YoutubeDL(options) as ydl:
-            ydl.download(["https://www.youtube.com/watch?v=pcnxkUbtJcE"])
-           
-    def download_url_list(self, download_url):
-        for url in download_url:
-            self.download_opus(url)
+        settings = YT_DLP_OPTIONS
+        settings['outtmpl'] = OUTPUT_DIR+name
+        with yt_dlp.YoutubeDL(YT_DLP_OPTIONS) as ydl:
+            ydl.download([url])
+        """
+        os.chdir('C:/Users/alexf/Documents/Python/SpotifyConverter/output')
+        os.system(f'yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 {url}')
+        os.chdir('..')
+    def download_url_list(self, url,name):
+        self.download_opus(url,name)
             
 
 

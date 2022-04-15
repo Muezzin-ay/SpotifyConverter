@@ -22,3 +22,19 @@ SPOTIFY_LOGIN = 'https://accounts.spotify.com/'
 
 # Youtube -Dlp Options
 OUTPUT_DIR = './output/'
+
+YT_DLP_OPTIONS = {
+        'format':'bestaudio/best',
+        'extractaudio':True,
+        'audioformat':'opus',
+        'outtmpl':'/output/',     #name the file the ID of the video
+        'noplaylist':True,
+        'nocheckcertificate':True,
+        'proxy':"",
+        'addmetadata':True,
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'opus',
+            'preferredquality': '192',
+        }]
+    }
