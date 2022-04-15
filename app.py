@@ -10,16 +10,16 @@ def get_song_data() :
     user, passw = load_account_data()
     sf = SpotifyFront(user, passw)
     playlist_url = sf.choose_playlist()
-    song_data = sf.load_songs(playlist_url)
+    songs = sf.load_songs(playlist_url)
 
-    for song in song_data :
+    for song in songs :
         print(song)
 
-    return song_data
+    return songs
 
 
 def main() :
-    song_data = get_song_data()
+    songs = get_song_data()
     
 
 def load_account_data() :
