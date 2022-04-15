@@ -9,12 +9,15 @@ import time
 from urllib import request
 import os
 
-class get_url_using_name():
+class get_url_using_name:
 
-    def __init__(self):
+    def __init__(self,song):
+        self.song = song
+        self.name, self.interpreter = song.get_information()
         name = "Harrison Heatwaves"
         self.supposed_duration = "2:50"
         self.name = name
+        print(self.name, self.interpreter)
 
     def start_selenium(self):
 
@@ -79,11 +82,28 @@ class get_url_using_name():
 
 
 class Rip():
+    from yt_dlp import YoutubeDL
+    yt = YoutubeDL()
+    options = {
+        'format':'bestaudio/best',
+        'extractaudio':True,
+        'audioformat':'mp3',
+        'outtmpl':'/output/'+'%(id)s.%(ext)s',     #name the file the ID of the video
+        'noplaylist':True,
+        'nocheckcertificate':True,
+        'proxy':"",
+        'addmetadata':True,
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }]
+    }
     def download_opus(self, url):
         #dummy_song = Song("DummyName", "DummyInterpreter", "DummyUrl")
-        print("hello world")
-        os.chdir("C:/Users/alexf/Documents/Python/SpotifyConverter/output")
-        os.system(f'yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 {url}')
+
+        with yt_dlp.YoutubeDL(options) as ydl:
+            ydl.download(["https://www.youtube.com/watch?v=pcnxkUbtJcE"])
            
     def download_url_list(self, download_url):
         for url in download_url:
@@ -92,16 +112,18 @@ class Rip():
 
 
 
-g1 = get_url_using_name()
-g1.create_youtube_url()
-download_url = g1.start_selenium()
+#g1 = get_url_using_name()
+#g1.create_youtube_url()
+#download_url = g1.start_selenium()
 
-r1 = Rip()
-r1.download_url_list(download_url)
+#r1 = Rip()
+#r1.download_url_list(download_url)
 
 
 
-print(f"downloadurl:{download_url}")
+#print(f"downloadurl:{download_url}")
+
+
 
 """extract youtube video with highest quality
 yt-dlp --extract-audio --audio-format mp3 --audio-quality 0
