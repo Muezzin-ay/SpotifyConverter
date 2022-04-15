@@ -37,5 +37,5 @@ if __name__ == '__main__' :
     #main()
 
     from yt_dlp import YoutubeDL
-    yt = YoutubeDL()
+    yt = YoutubeDL(p))
     yt.download(["https://www.youtube.com/watch?v=pcnxkUbtJcE"])
