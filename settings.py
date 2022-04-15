@@ -19,3 +19,6 @@ SPOTIFY_PASSW = ""
 # Spotify Frontend Settings
 SPOTIFY_URL = 'https://open.spotify.com/'
 SPOTIFY_LOGIN = 'https://accounts.spotify.com/'
+
+# Youtube -Dlp Options
+OUTPUT_DIR = './output/'
