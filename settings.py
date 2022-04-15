@@ -1,5 +1,6 @@
 
 # Selenium Options
+LOADING_DELAY = 3
 PATH_GECKODRIVER = './drivers/geckodriver.exe'
 
 # Selenium Page Elements
@@ -8,6 +9,7 @@ PLAYLIST_URL = "standalone-ellipsis-one-line"
 PLAYLIST_NAME = "Type__TypeElement-goli3j-0"
 SONG_NAME = "iCQtmPqY0QvkumAOuCjr"
 SONG_COVER = "mMx2LUixlnN_Fu45JpFB"
+SONG_LENGHT = "Type__TypeElement-goli3j-0"
 
 # Spotify Account
 ACCOUNT_FILE = './account.json'

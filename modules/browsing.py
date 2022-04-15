@@ -2,7 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
 
+from modules.calcfunc import convert_duration
 from settings import *
+
 
 
 class SpotifyFront :
@@ -46,7 +48,7 @@ class PageDriver :
         self._delay()
 
     def _delay(self) :
-        time.sleep(3)
+        time.sleep(LOADING_DELAY)
 
     def authenticate(self, user, passw) :
         self._load_page(SPOTIFY_LOGIN)
@@ -76,29 +78,43 @@ class PageDriver :
     def get_playlist_content(self, url) :
         playlist_content = []
         self._load_page(url)
-        song_info = self.browser.find_elements(By.CLASS_NAME, SONG_NAME)
 
+        #Cover url
         cover_url_data = self.browser.find_elements(By.CLASS_NAME, SONG_COVER)
         cover_urls = [url.get_attribute("src") for url in cover_url_data[1:]]
 
-        for counter, entry in enumerate(song_info) :
-            song_data = entry.text.split("\n")
-            playlist_content.append(Song(song_data[0], song_data[1], cover_urls[counter]))
+        #Song lenght
+        durations = []
+        duration_data = self.browser.find_elements(By.CLASS_NAME, 'HcMOFLaukKJdK5LfdHh0')
+        for duration in duration_data :
+            text = duration.text
+            if text != "" and text != "HINZUFÜGEN" :
+                durations.append(text)
 
+        #Song name and intepreter
+        song_info = self.browser.find_elements(By.CLASS_NAME, SONG_NAME)
+
+        #Creating song objects
+        song_count = len(durations)
+        for i in range(song_count) :
+            song_data = song_info[i].text.split("\n")
+            playlist_content.append(Song(song_data[0], song_data[1], durations[i], cover_urls[i]))
+        
         return playlist_content
 
 
 
 class Song :
-    def __init__(self, name, interpreter, cover_url) :
+    def __init__(self, name, interpreter, duration, cover_url) :
         self.name = name
         self.interpreter = interpreter
+        self.duration = convert_duration(duration)
         self.cover_url = cover_url
 
         self._edit_cover_url()
 
     def __repr__(self) :
-        return f'Song "{self.name}" from "{self.interpreter}", Cover "{self.cover_url}"'
+        return f'Song "{self.name}"({self.duration}) from "{self.interpreter}", Cover "{self.cover_url}"'
 
     def _edit_cover_url(self) : #Replace a url part for better image resolution
         self.cover_url = self.cover_url.replace("ab67616d00004851", "ab67616d00001e02")
@@ -107,4 +123,4 @@ class Song :
         return self.cover_url
 
     def get_information(self) :
-        return self.name, self.interpreter
+        return self.name, self.interpreter, self.duration
