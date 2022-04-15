@@ -6,7 +6,8 @@ import yt_dlp
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
-import requests
+from urllib import request
+import os
 
 class get_url_using_name():
 
@@ -16,7 +17,7 @@ class get_url_using_name():
         self.name = name
 
     def start_selenium(self):
-        """
+
         browser = webdriver.Firefox(executable_path="./drivers/geckodriver.exe")
         browser.get(self.youtube_url)
 
@@ -24,14 +25,19 @@ class get_url_using_name():
         consent_button_css = 'ytd-button-renderer.style-scope:nth-child(2) > a:nth-child(1) > tp-yt-paper-button:nth-child(1)'
         consent= browser.find_element_by_css_selector(consent_button_css)
         consent.click()
-        """
-        requests.
-
+        
         content = browser.page_source.encode('utf-8').strip()
+
+
+
         soup = BeautifulSoup(content, 'lxml')
+
+
+
         titles = soup.find_all('a',id='video-title')
         durations = soup.find_all('span', id='text')
         href_links = [video.get_attribute('href') for video in browser.find_elements_by_id("thumbnail")]
+
         
         for href_link in href_links:
             #print(f"href:{href_link}")
@@ -44,12 +50,12 @@ class get_url_using_name():
         for duration in durations:
             duration_cut = duration.text.replace(" ","")
             duration_cut_completely = duration_cut.replace("\n","")
-            print(f"duration:{duration}\n duration_cut:{duration_cut} \n duration_cut_completely:{duration_cut_completely}")
+            #print(f"duration:{duration}\n duration_cut:{duration_cut} \n duration_cut_completely:{duration_cut_completely}")
             #print(f"duration:{duration_cut_completely}---")
             
             if duration_cut_completely == self.supposed_duration:
                 #correct_video_title = titles[counter].text.replace("\n","")
-                print(f"FOUND CORRECT VIDEO! {titles[counter].text}, {duration_cut_completely} url:{href_links[counter+1]}")
+                print(f"FOUND CORRECT VIDEO! {titles[counter].text}, {duration_cut_completely}url:{href_links[counter+1]}")
                 download_url.append(href_links[counter+1])
 
                 counter +=1
@@ -73,17 +79,27 @@ class get_url_using_name():
 
 
 class Rip():
-    def download_opus(self):
+    def download_opus(self, url):
         #dummy_song = Song("DummyName", "DummyInterpreter", "DummyUrl")
-        print("hello world")   
+        print("hello world")
+        os.system(f'yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 {url}')
+           
+    def download_url_list(self, download_url):
+        for url in download_url:
+            self.download_opus(url)
+            
 
-    def start(self):
-        self.download_opus()
 
 
 g1 = get_url_using_name()
 g1.create_youtube_url()
 download_url = g1.start_selenium()
+
+r1 = Rip()
+r1.download_url_list(download_url)
+
+
+
 print(f"downloadurl:{download_url}")
 
 """extract youtube video with highest quality
