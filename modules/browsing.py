@@ -119,8 +119,11 @@ class Song :
     def _edit_cover_url(self) : #Replace a url part for better image resolution
         self.cover_url = self.cover_url.replace("ab67616d00004851", "ab67616d00001e02")
 
+    def get_information(self) :
+        return self.name, self.interpreter
+
+    def get_duration(self) :
+        return self.duration
+
     def get_cover_url(self) :
         return self.cover_url
-
-    def get_information(self) :
-        return self.name, self.interpreter, self.duration
