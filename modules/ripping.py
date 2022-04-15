@@ -6,6 +6,7 @@ import yt_dlp
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import time
+import requests
 
 class get_url_using_name():
 
@@ -15,6 +16,7 @@ class get_url_using_name():
         self.name = name
 
     def start_selenium(self):
+        """
         browser = webdriver.Firefox(executable_path="./drivers/geckodriver.exe")
         browser.get(self.youtube_url)
 
@@ -22,7 +24,8 @@ class get_url_using_name():
         consent_button_css = 'ytd-button-renderer.style-scope:nth-child(2) > a:nth-child(1) > tp-yt-paper-button:nth-child(1)'
         consent= browser.find_element_by_css_selector(consent_button_css)
         consent.click()
-
+        """
+        requests.
 
         content = browser.page_source.encode('utf-8').strip()
         soup = BeautifulSoup(content, 'lxml')
