@@ -12,6 +12,11 @@ from settings import *
 from modules.calcfunc import convert_duration
 from string import punctuation
 
+#
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 class get_url_using_name:
 
     def __init__(self,song):
@@ -28,22 +33,31 @@ class get_url_using_name:
         browser = webdriver.Firefox(executable_path="./drivers/geckodriver.exe")
         browser.get(self.youtube_url)
 
-        time.sleep(10)
-        consent_button_css = 'ytd-button-renderer.style-scope:nth-child(2) > a:nth-child(1) > tp-yt-paper-button:nth-child(1)'
-        consent= browser.find_element_by_css_selector(consent_button_css)
-        consent.click()
-        
-        content = browser.page_source.encode('utf-8').strip()
+        #time.sleep(10)
 
+        #consent_button_css = 'ytd-button-renderer.style-scope:nth-child(2) > a:nth-child(1) > tp-yt-paper-button:nth-child(1)'
+        #consent= browser.find_element_by_css_selector(consent_button_css)
+        #consent.click()
+        WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'ytd-button-renderer.style-scope:nth-child(2) > a:nth-child(1) > tp-yt-paper-button:nth-child(1)'))).click()
+        time.sleep(3)
+        #time.sleep(1)
+        content = browser.page_source.encode('utf-8').strip()
+        print(f'content:{content[:100]}')
 
 
         soup = BeautifulSoup(content, 'lxml')
 
 
-
-        titles = soup.find_all('a',id='video-title')
-        durations = soup.find_all('span', id='text')
-        href_links = [video.get_attribute('href') for video in browser.find_elements_by_id("thumbnail")]
+        try:
+            titles = soup.find_all('a',id='video-title')
+            durations = soup.find_all('span', id='text')
+            href_links = [video.get_attribute('href') for video in browser.find_elements_by_id("thumbnail")]
+            dump_variable = href_links[0]
+        except:
+            time.sleep(5)
+            titles = soup.find_all('a',id='video-title')
+            durations = soup.find_all('span', id='text')
+            href_links = [video.get_attribute('href') for video in browser.find_elements_by_id("thumbnail")]
 
         
         for href_link in href_links:
@@ -64,10 +78,10 @@ class get_url_using_name:
                 continue
             offset_durations = abs(self.supposed_duration-convert_duration(duration_cut_completely))
             
-            if offset_durations < 5:
+            if offset_durations < 3:
                 #correct_video_title = titles[counter].text.replace("\n","")
                 print(f"FOUND CORRECT VIDEO! {titles[counter].text}, {duration_cut_completely}url:{href_links[counter+1]}")
-                download_url.append(href_links[counter+1])
+                download_url.append(href_links[counter+1]) #+1
 
                 counter +=1
         return download_url[-1]
