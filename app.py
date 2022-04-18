@@ -1,8 +1,10 @@
 
+from concurrent.futures import thread
 import json
 
 from modules.browsing import SpotifyFront
 from modules.ripping import get_url_using_name, Rip
+from modules.ripping import *
 from settings import *
 
 
@@ -21,6 +23,7 @@ def rip_songs(songs) :
     for song in songs:
         get_url = get_url_using_name(song)
         yt_search_url = get_url.create_youtube_url()
+        #get_url.threading_(3,get_url.start_selenium, yt_search_url)
         youtube_url = get_url.start_selenium(yt_search_url)
         rip = Rip()
         rip.download_url_list(youtube_url,song.get_information()[0])
