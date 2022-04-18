@@ -1,5 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 
 from modules.calcfunc import convert_duration
@@ -8,100 +10,76 @@ from settings import *
 
 
 class SpotifyFront :
-    def __init__(self, user, passw) :
+    def __init__(self, login_data) :
         self.driver = PageDriver()
+        user, passw = login_data
         self.driver.authenticate(user, passw)
 
-    def _load_playlists(self) :
-        return self.driver.get_playlist_data()
+    def get_playlist_links(self) :
+        links = []
+        elements = self.driver.search([PLAYLIST_URL], min_count=3)[0][2:]
+        for data in elements :
+            links.append(data.get_attribute('href'))
+        return links
 
-    def choose_playlist(self) :
-        names, urls = self._load_playlists()
+    def get_song_count(self, url) :
+        print("sus")
+        self.driver.load_page(url)
+        print(self.driver.find_element(By.CLASS_NAME, 'Type__TypeElement-goli3j-0 ebHsEf').text)
+
+    def get_playlist(self, url) :
+        elements = self.driver.search(SONG_BLUEPRINT, url=url, min_count=2)
+        url_elements = elements[1]
+        cover_urls = [url.get_attribute("src") for url in url_elements[1:]]
+
+        unfiltered = [duration.text for duration in elements[2]]
+        durations = list(filter(lambda text: text != "" and text != "HINZUFÜGEN", unfiltered))
+
+        name_elements = elements[0]
+        names = [data.text.split("\n")[0] for data in name_elements]
+        interpreters = [data.text.split("\n")[1] for data in name_elements]
+
+        playlist = [Song(names[i], interpreters[i], durations[i], cover_urls[i]) for i in range(len(cover_urls))]
+        return playlist
+       
         
-        print("Choose one Playlist: ")
-        for counter, name in enumerate(names) :
-            print(f"{counter+1}) {name}")
-        selected_index = self._confirm_input(len(urls))
 
-        return urls[selected_index]
-        
-    def _confirm_input(self, max_possible) :
-        while True :
-            try :
-                selected_index = int(input("Playlist Number>>"))
-                if (selected_index >= 0 and selected_index <= max_possible) :
-                    return selected_index -1
-            except :
-                pass
-
-    def load_songs(self, playlist_url) :
-        return self.driver.get_playlist_content(playlist_url)
-
-            
-
-class PageDriver :
+class PageDriver(webdriver.Firefox) :
     def __init__(self) :
-        self.browser = webdriver.Firefox(executable_path=PATH_GECKODRIVER)
+        super().__init__(executable_path=PATH_GECKODRIVER)
+        self.still_loading = False
 
-    def _load_page(self, url) :
-        self.browser.get(url)
-        self._delay()
+    def find_element(self, by=..., value=None) :
+        if self.still_loading :
+            self.still_loading = False
+            return WebDriverWait(self, 10).until(EC.element_to_be_clickable((by, value)))
+        return super().find_element(by, value)
 
-    def _delay(self) :
-        time.sleep(LOADING_DELAY)
+    def find_elements(self, by=..., value=None, min_count=0) :
+        while self.still_loading :
+            elements = super().find_elements(by, value)
+            if len(elements) > min_count :
+                self.still_loading = False
+                return elements
+        return super().find_elements(by, value)
 
+    def load_page(self, url) :
+        self.get(url)
+        self.still_loading = True
+    
     def authenticate(self, user, passw) :
-        self._load_page(SPOTIFY_LOGIN)
+        self.load_page(SPOTIFY_LOGIN)
+        self.find_element(By.ID, "login-username").send_keys(user)
+        self.find_element(By.ID, "login-password").send_keys(passw)
+        self.find_element(By.XPATH, LOGIN_BUTTON).click()
+        time.sleep(0.2)
 
-        user_input = self.browser.find_element(By.ID, "login-username")
-        passw_input = self.browser.find_element(By.ID, "login-password")
-        user_input.send_keys(user)
-        passw_input.send_keys(passw)
-        
-        self.browser.find_element(By.XPATH, LOGIN_BUTTON).click()
-        self._delay() #Button refers to an link, site has to load again
-        
-    def get_playlist_data(self) :
-        playlist_names = []
-        playlist_urls = []
-
-        self._load_page(SPOTIFY_URL)
-        playlist_elements = self.browser.find_elements(By.CLASS_NAME, PLAYLIST_URL)
-        for element in playlist_elements :
-            playlist_names.append(element.text)
-            url = element.get_attribute("href")
-            if url:
-                playlist_urls.append(url)
-
-        return playlist_names[2:], playlist_urls #Alle names except first two -> create playlist and favorite songs
-
-    def get_playlist_content(self, url) :
-        playlist_content = []
-        self._load_page(url)
-
-        #Cover url
-        cover_url_data = self.browser.find_elements(By.CLASS_NAME, SONG_COVER)
-        cover_urls = [url.get_attribute("src") for url in cover_url_data[1:]]
-
-        #Song lenght
-        durations = []
-        duration_data = self.browser.find_elements(By.CLASS_NAME, 'HcMOFLaukKJdK5LfdHh0')
-        for duration in duration_data :
-            text = duration.text
-            if text != "" and text != "HINZUFÜGEN" :
-                durations.append(text)
-
-        #Song name and intepreter
-        song_info = self.browser.find_elements(By.CLASS_NAME, SONG_NAME)
-
-        #Creating song objects
-        song_count = len(durations)
-        for i in range(song_count) :
-            song_data = song_info[i].text.split("\n")
-            playlist_content.append(Song(song_data[0], song_data[1], durations[i], cover_urls[i]))
-        
-        return playlist_content
-
+    def search(self, tags, url=SPOTIFY_URL, min_count=0) :
+        elements = []
+        self.load_page(url)
+        for name_tag in tags :
+            elements.append(self.find_elements(By.CLASS_NAME, name_tag, min_count=min_count))
+        return elements
 
 
 class Song :

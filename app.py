@@ -1,21 +1,21 @@
 
 import json
 
-from modules.browsing import SpotifyFront
+from modules.browsing import PageDriver, SpotifyFront
 from modules.ripping import get_url_using_name, Rip
 from settings import *
 
 
 def get_song_data() :
-    user, passw = load_account_data()
-    sf = SpotifyFront(user, passw)
-    playlist_url = sf.choose_playlist()
-    songs = sf.load_songs(playlist_url)
-
-    for song in songs :
+    sf = SpotifyFront(load_account_data())
+    pl_links = sf.get_playlist_links()
+    #sf.get_song_count(pl_links[0])
+    playlist = sf.get_playlist(pl_links[0])
+    for song in playlist :
         print(song)
     
-    return songs
+    return playlist
+
 
 def rip_songs(songs) :
     for song in songs:
