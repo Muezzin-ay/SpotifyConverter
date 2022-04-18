@@ -28,7 +28,7 @@ class SpotifyFront :
         print(self.driver.find_element(By.CLASS_NAME, 'Type__TypeElement-goli3j-0 ebHsEf').text)
 
     def get_playlist(self, url) :
-        elements = self.driver.search(SONG_BLUEPRINT, url=url, min_count=2)
+        elements = self.driver.search(SONG_BLUEPRINT, url=url)
         url_elements = elements[1]
         cover_urls = [url.get_attribute("src") for url in url_elements[1:]]
 
