@@ -81,7 +81,7 @@ class get_url_using_name:
             if offset_durations < 3:
                 #correct_video_title = titles[counter].text.replace("\n","")
                 print(f"FOUND CORRECT VIDEO! {titles[counter].text}, {duration_cut_completely}url:{href_links[counter+1]}")
-                download_url.append(href_links[counter+1]) #+1
+                download_url.append(href_links[counter]) #+1
 
                 counter +=1
         return download_url[-1]
