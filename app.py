@@ -27,7 +27,7 @@ def rip_songs(songs) :
         #youtube_url = get_url.start_selenium(yt_search_url)
         rip = Rip()
         print(f"test{results[0],song.get_information()[0]}")
-        get_url.threading_(1,rip.download_url_list,results[0],song.get_information()[0])
+        get_url.threading_(1,rip.download_url_list,results[0])
         #rip.download_url_list(youtube_url,song.get_information()[0])
 
 

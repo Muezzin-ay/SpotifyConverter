@@ -58,7 +58,7 @@ class get_url_using_name:
         #consent= browser.find_element_by_css_selector(consent_button_css)
         #consent.click()
         WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR,'ytd-button-renderer.style-scope:nth-child(2) > a:nth-child(1) > tp-yt-paper-button:nth-child(1)'))).click()
-        time.sleep(3)
+        time.sleep(5)
         #time.sleep(1)
         content = browser.page_source.encode('utf-8').strip()
         print(f'content:{content[:100]}')
@@ -114,10 +114,11 @@ class get_url_using_name:
         browser.find_element_by_tag_name('body').send_keys(Keys.COMMAND + 'w') 
 
         if type(download_url[0]) == string:
+            print("return download url")
             return download_url[0]
         else:
             return download_url[1]
-
+            print("return download url")
 
     def threading_(self, how_many_threads, target_function, arguments):
         print("start of threading",how_many_threads)
@@ -163,7 +164,9 @@ class get_url_using_name:
 class Rip():
     from yt_dlp import YoutubeDL
     yt = YoutubeDL()
-    def download_opus(self, url,name):
+    def download_opus(self, url_name_tuple): #url, name
+        url = url_name_tuple[0]
+        name = url_name_tuple[1]
         """
         #dummy_song = Song("DummyName", "DummyInterpreter", "DummyUrl")
         settings = YT_DLP_OPTIONS
