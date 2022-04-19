@@ -23,10 +23,12 @@ def rip_songs(songs) :
     for song in songs:
         get_url = get_url_using_name(song)
         yt_search_url = get_url.create_youtube_url()
-        #get_url.threading_(3,get_url.start_selenium, yt_search_url)
-        youtube_url = get_url.start_selenium(yt_search_url)
+        results = get_url.threading_(1,get_url.start_selenium, yt_search_url)
+        #youtube_url = get_url.start_selenium(yt_search_url)
         rip = Rip()
-        rip.download_url_list(youtube_url,song.get_information()[0])
+        print(f"test{results[0],song.get_information()[0]}")
+        get_url.threading_(1,rip.download_url_list,results[0],song.get_information()[0])
+        #rip.download_url_list(youtube_url,song.get_information()[0])
 
 
 

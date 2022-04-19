@@ -121,6 +121,7 @@ class get_url_using_name:
 
     def threading_(self, how_many_threads, target_function, arguments):
         print("start of threading",how_many_threads)
+        results = []
         thread_names = []
         for number in range(how_many_threads):
             thread_names.append(f"Thread_{number}")
@@ -128,11 +129,13 @@ class get_url_using_name:
 
         for i in range(len(thread_names)):
             print(f"thread_names:{thread_names[i]}")
-            thread_names[i] = threading.Thread(target=target_function, args=arguments)
+            thread_names[i] = ThreadWithResult(target=target_function, args=(arguments,))
             thread_names[i].start()
-            #thread_names[i].join()
-            #print(thread_names[i].result)
+            thread_names[i].join()
+            results.append(thread_names[i].result)
+            print(f"results of the thread{thread_names[i].result}")
             #thread_names[i].terminate()
+        return results
             
 
                 
@@ -173,7 +176,8 @@ class Rip():
         os.chdir('..')
     def download_url_list(self, url,name):
         self.download_opus(url,name)
-            
+        
+
 
 
 
